@@ -1,5 +1,4 @@
 #include "smallsh_builtins.h"
-#include <unistd.h>
 
 void smallsh_exit() {
     
@@ -17,6 +16,10 @@ void smallsh_cd(char* path) {
     }
 }
 
-void smallsh_status() {
-
+void smallsh_status(int p_status, bool if_sig) {
+    if (if_sig) {
+        printf("terminated by signal %d", p_status);
+    } else {
+        printf("exit status %d", p_status);
+    }
 }
