@@ -2,16 +2,6 @@
 
 #include "dynarray.h"
 
-/*
- * This is the definition of the dynamic array structure you'll use for your
- * implementation.  Importantly, your dynamic array implementation will store
- * each data element as a void* value.  This will permit data of any type to
- * be stored in your array.  Because each individual element will be stored in
- * your array as type void*, the data array needs to be an array of void*.
- * Hence it is of type void**.
- *
- * You should not modify this structure.
- */
 struct dynarray {
   void** data;
   int size;
@@ -19,10 +9,13 @@ struct dynarray {
 };
 
 /*
- * This function should allocate and initialize a new, empty dynamic array and
- * return a pointer to it.  The array you allocate should have an initial
- * capacity of 2.
- */
+*   Function: dynarray_create()
+*   Status: DONE
+*   Purpose: To create a dynarray of size 0 and capacity 2. Returns a pointer to
+*            the structure created.
+*   Preconditions: N/A
+*   Postconditions: A dynarray is allocated in memory.
+*/
 struct dynarray* dynarray_create() {
   struct dynarray* array = malloc(sizeof(struct dynarray));
   array->size = 0;
@@ -32,16 +25,12 @@ struct dynarray* dynarray_create() {
 }
 
 /*
- * This function should free the memory associated with a dynamic array.  In
- * particular, while this function should up all memory used in the array
- * itself (i.e. the underlying `data` array), it should not free any memory
- * allocated to the pointer values stored in the array.  In other words, this
- * function does not need to *traverse* the array and free the individual
- * elements.  This is the responsibility of the caller.
- *
- * Params:
- *   da - the dynamic array to be destroyed.  May not be NULL.
- */
+*   Function: dynarray_free()
+*   Status: DONE
+*   Purpose: To free the memory associated with a dynarray.
+*   Preconditions: The dynarray memory has already been allocated.
+*   Postconditions: The memory has been freed.
+*/
 void dynarray_free(struct dynarray* da) {
   free(da->data);
   free(da);
@@ -49,26 +38,25 @@ void dynarray_free(struct dynarray* da) {
 }
 
 /*
- * This function should return the size of a given dynamic array (i.e. the
- * number of elements stored in it, not the capacity).
- */
+*   Function: dynarray_size()
+*   Status: DONE
+*   Purpose: A getter function for the size of the dynarray.
+*   Preconditions: The dynarray in question exists.
+*   Postconditions: N/A
+*/
 int dynarray_size(struct dynarray* da) {
   return da->size;
 }
 
 /*
- * This function should insert a new value to a given dynamic array.  For
- * simplicity, this function should only insert elements at the *end* of the
- * array.  In other words, it should always insert the new element immediately
- * after the current last element of the array.  If there is not enough space
- * in the dynamic array to store the element being inserted, this function
- * should double the size of the array.
- *
- * Params:
- *   da - the dynamic array into which to insert an element.  May not be NULL.
- *   val - the value to be inserted.  Note that this parameter has type void*,
- *     which means that a pointer of any type can be passed.
- */
+*   Function: dynarray_insert()
+*   Status: DONE
+*   Purpose: To insert a new item into a dynamic array. If the item would cause the
+*            array to be over the size limit, expands the capacity of the array by
+*            2x the current capacity.
+*   Preconditions: The array in question exists.
+*   Postconditions: The new item has been inserted into the array.
+*/
 void dynarray_insert(struct dynarray* da, void* val) {
   int i;
   if (da->size == da->capacity) {
@@ -86,20 +74,15 @@ void dynarray_insert(struct dynarray* da, void* val) {
 }
 
 /*
- * This function should remove an element at a specified index from a dynamic
- * array.  All existing elements following the specified index should be moved
- * forward to fill in the gap left by the removed element.  In other words, if
- * the element at index i is removed, then the element at index i+1 should be
- * moved forward to index i, the element at index i+2 should be moved forward
- * to index i+1, the element at index i+3 should be moved forward to index i+2,
- * and so forth.
- *
- * Params:
- *   da - the dynamic array from which to remove an element.  May not be NULL.
- *   idx - the index of the element to be removed.  The value of `idx` must be
- *     between 0 (inclusive) and n (exclusive), where n is the number of
- *     elements stored in the array.
- */
+*   Function: dynarray_remove()
+*   Status: DONE
+*   Purpose: To remove an item from the dynamic array. Once an item is
+*            removed, shifts all items following it down by one index,
+*            and decrements the size by 1.
+*   Preconditions: The array in question exists; idx is within the bounds
+*                  of the size of the array. Does not check either condition.
+*   Postconditions: The item in the array has been removed.
+*/
 void dynarray_remove(struct dynarray* da, int idx) {
   int i;
   for (i = idx; i < (da->size - 1); i++) {
@@ -111,31 +94,26 @@ void dynarray_remove(struct dynarray* da, int idx) {
 }
 
 /*
- * This function should return the value of an existing element a dynamic
- * array. Note that this value should be returned as type void*.
- *
- * Params:
- *   da - the dynamic array from which to get a value.  May not be NULL.
- *   idx - the index of the element whose value should be returned.  The value
- *     of `idx` must be between 0 (inclusive) and n (exclusive), where n is the
- *     number of elements stored in the array.
- */
+*   Function: dynarray_get()
+*   Status: DONE
+*   Purpose: To return the element of the specified index. Essentially
+*            a getter.
+*   Preconditions: The arary exists; idx is within the bounds of the size.
+*                  Does not check either condition.
+*   Postconditions: N/A
+*/
 void* dynarray_get(struct dynarray* da, int idx) {
   return da->data[idx];
 }
 
 /*
- * This function should update (i.e. overwrite) the value of an existing
- * element in a dynamic array.
- *
- * Params:
- *   da - the dynamic array in which to set a value.  May not be NULL.
- *   idx - the index of the element whose value should be updated.  The value
- *     of `idx` must be between 0 (inclusive) and n (exclusive), where n is the
- *     number of elements stored in the array.
- *   val - the new value to be set.  Note that this parameter has type void*,
- *     which means that a pointer of any type can be passed.
- */
+*   Function: dynarray_set()
+*   Status: DONE
+*   Purpose: To set the value at the given index to a certain index.
+*            Does not insert new elements.
+*   Preconditions: The array exists; idx is within the size.
+*   Postconditions: The element at idx is now val.
+*/
 void dynarray_set(struct dynarray* da, int idx, void* val) {
   da->data[idx] = val;
   return;
