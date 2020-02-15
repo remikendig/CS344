@@ -10,3 +10,6 @@ smallsh_builtins.o: smallsh_builtins.c smallsh_builtins.h
 
 dynarray.o: dynarray.c dynarray.h
 	$(CC) -c dynarray.c
+
+clean:
+	rm -f dynarray.o smallsh_builtins.o smallsh
