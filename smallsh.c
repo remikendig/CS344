@@ -12,7 +12,8 @@
 #define COMMAND_MAX_LENGTH 2048
 
 int main (int* argc, char** argv) {
-    int n_chars = -5, i = 0;
+    int n_chars = -5, i = 0, fg_status;
+    bool if_sig;
     size_t buf_size = -5;
     char* line = NULL;
     char args[MAX_ARGS][COMMAND_MAX_LENGTH];
