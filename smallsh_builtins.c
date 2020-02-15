@@ -1,4 +1,5 @@
 #include "smallsh_builtins.h"
+#include "dynarray.h"
 
 void smallsh_exit() {
     
