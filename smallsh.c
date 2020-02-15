@@ -16,14 +16,5 @@ int main (int* argc, char** argv) {
         memset(args[i], '\0', sizeof(args[i]));
     }
 
-    strcpy(curdir, getcwd(buf, sizeof(buf)));
-
-    printf("current directory: %s\n", curdir);
-
-    smallsh_cd("/nfs/stak/users/kendigs/cs");
-
-    strcpy(curdir, getcwd(buf, sizeof(buf)));
-    printf("current directory: %s\n", curdir);
-
     return 0;
 }
