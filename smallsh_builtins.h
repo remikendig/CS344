@@ -12,7 +12,7 @@
 
 #include "dynarray.h"
 
-void smallsh_exit();
+void smallsh_exit(struct dynarray* processes);
 void smallsh_cd(char* path);
 void smallsh_status(int p_status, bool if_sig);
 

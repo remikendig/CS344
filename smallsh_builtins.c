@@ -1,6 +1,6 @@
 #include "smallsh_builtins.h"
 
-void smallsh_exit() {
+void smallsh_exit(struct dynarray* processes) {
     
 }
 
