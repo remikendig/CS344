@@ -1,6 +1,11 @@
 #ifndef __DYNARRAY_H
 #define __DYNARRAY_H
 
+/*
+*   IMPORTANT NOTE:
+*       I CREATED THIS DATA STRUCTURE FOR CS 261 FALL 2019.
+*/
+
 struct dynarray;
 
 struct dynarray* dynarray_create();
