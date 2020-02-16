@@ -28,7 +28,7 @@ int main (int* argc, char** argv) {
             continue;
         }
 
-        dynarray_set(args, 0, token);
+        dynarray_insert(args, token);
 
         if (line[0] == '#') {
             ;
