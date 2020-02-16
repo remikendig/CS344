@@ -4,17 +4,22 @@
 #define COMMAND_MAX_LENGTH 2048
 
 int main (int* argc, char** argv) {
-    int n_chars = -5, i = 0, fg_status;
-    bool if_sig, fg_mode;
-    size_t buf_size = -5;
-    char* line = NULL;
-    char args[MAX_ARGS][COMMAND_MAX_LENGTH];
-    char curdir[1000];
-    char buf[1000];
+    int i = 0, fg_status = 0, argn = 0; //i is for loops, fg_status is for the status command, argn is for the number of command line arguments
+    bool if_sig = false, fg_mode = false; //if_sig is for checking whether the last fg process was terminated by signal, fg_mode is for toggling foreground-only mode
+    char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
+    //char args[MAX_ARGS][COMMAND_MAX_LENGTH];
 
-    for (i = 0; i < MAX_ARGS; i++) {
-        memset(args[i], '\0', sizeof(args[i]));
-    }
+    struct dynarray* args = dynarray_create();
+    struct dynarray* processes = dynarray_create();
+
+    fgets(line, COMMAND_MAX_LENGTH, stdin);
+    printf("%s\n", line);
+    fflush(stdout);
+
+
+
+    dynarray_free(args);
+    dynarray_free(processes);
 
     return 0;
 }
