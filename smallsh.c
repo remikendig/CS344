@@ -1,4 +1,4 @@
-#include "smallsh_builtins.h"
+#include "smallsh_helpers.h"
 
 #define MAX_ARGS 512
 #define COMMAND_MAX_LENGTH 2048
@@ -8,7 +8,7 @@ int main (int* argc, char** argv) {
     bool if_sig = false, fg_mode = false; //if_sig is for checking whether the last fg process was terminated by signal, fg_mode is for toggling foreground-only mode
     char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
     struct dynarray* args;
-    char* token = 0;
+    
 
     args = dynarray_create();
     //struct dynarray* processes = dynarray_create();
@@ -20,26 +20,7 @@ int main (int* argc, char** argv) {
         dynarray_free(args);
         args = dynarray_create();
 
-        fgets(line, COMMAND_MAX_LENGTH, stdin);
-        token = strtok(line, " \n");
-
-        if (token == NULL) {
-            continue;
-        }
-
-        dynarray_insert(args, token);
-        //printf("%s\n", dynarray_get(args, 0));
-        //fflush(stdout);
-
-        while (token != NULL) {
-            token = strtok(NULL, " \n");
-            if (token == NULL) {
-                break;
-            }
-            dynarray_insert(args, token);
-            //printf("%s\n", dynarray_get(args, (dynarray_size(args) - 1)));
-            //fflush(stdout);
-        }
+        get_and_parse_input(args, line);
 
         if (line[0] == '#') {
             ;
