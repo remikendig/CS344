@@ -9,7 +9,6 @@ int main (int* argc, char** argv) {
     char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
     struct dynarray* args;
     char* token = 0;
-    //char args[MAX_ARGS][COMMAND_MAX_LENGTH];
 
     args = dynarray_create();
     //struct dynarray* processes = dynarray_create();
@@ -29,16 +28,28 @@ int main (int* argc, char** argv) {
         }
 
         dynarray_insert(args, token);
+        //printf("%s\n", dynarray_get(args, 0));
+        //fflush(stdout);
+
+        while (token != NULL) {
+            token = strtok(NULL, " \n");
+            if (token == NULL) {
+                break;
+            }
+            dynarray_insert(args, token);
+            //printf("%s\n", dynarray_get(args, (dynarray_size(args) - 1)));
+            //fflush(stdout);
+        }
 
         if (line[0] == '#') {
             ;
         } else {
-            printf("%s\n", dynarray_get(args, 0));
-            fflush(stdout);
+            for (i = 0; i < dynarray_size(args); i++) {
+                printf("%s\n", dynarray_get(args, i));
+                fflush(stdout);
+            }
         }
     }
-
-    
     
     dynarray_free(args);
     //dynarray_free(processes);
