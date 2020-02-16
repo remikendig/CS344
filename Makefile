@@ -2,8 +2,11 @@ CC=gcc -g
 
 all: smallsh
 
-smallsh: smallsh.c dynarray.o smallsh_builtins.o
-	$(CC) smallsh.c dynarray.o smallsh_builtins.o -o smallsh
+smallsh: smallsh.c dynarray.o smallsh_builtins.o smallsh_helpers.o
+	$(CC) smallsh.c dynarray.o smallsh_builtins.o smallsh_helpers.o -o smallsh
+
+smallsh_helpers.o: smallsh_helpers.c smallsh_helpers.h
+	$(CC) -c smallsh_helpers.c
 
 smallsh_builtins.o: smallsh_builtins.c smallsh_builtins.h
 	$(CC) -c smallsh_builtins.c
