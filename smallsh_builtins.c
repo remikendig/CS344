@@ -9,7 +9,7 @@
 *   Postconditions: The shell is exited.
 */
 void smallsh_exit(struct dynarray* processes) {
-    
+    exit(0);
 }
 
 /*
