@@ -3,3 +3,6 @@ p3gradingscript
 test
 test.c
 *.o
+p3gradingscript
+smallsh_helpers.c
+smallsh_helpers.h
