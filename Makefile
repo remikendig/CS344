@@ -15,4 +15,4 @@ dynarray.o: dynarray.c dynarray.h
 	$(CC) -c dynarray.c
 
 clean:
-	rm -f dynarray.o smallsh_builtins.o smallsh
+	rm -f dynarray.o smallsh_builtins.o smallsh_helpers.o smallsh
