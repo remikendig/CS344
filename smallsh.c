@@ -26,8 +26,8 @@ int main (int* argc, char** argv) {
             }
         }
 
-        args = malloc(argn * sizeof(char*)); //allocate memory for array of arguments
-        for (i = 0; i < argn; i++) {
+        args = malloc((argn + 1) * sizeof(char*)); //allocate memory for array of arguments + NULL
+        for (i = 0; i <= argn; i++) {
             args[i] = malloc((COMMAND_MAX_LENGTH + 1) * sizeof(char));
         }
 
@@ -53,6 +53,8 @@ int main (int* argc, char** argv) {
             strcpy(args[i], token);
             i++;
         }
+
+        args[argn] = NULL; //terminating NULL for execvp
 
         if (line[0] == '#') {
             continue; //comments are ignored
