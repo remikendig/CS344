@@ -45,12 +45,21 @@ void get_and_parse_input(char*** args, char line[COMMAND_MAX_LENGTH], int* argn)
     *args = args_temp;
 }
 
-void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn) {
+void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn, int* fd_in, int* fd_out) {
     int i = 0;
 
     for (i = 0; i < argn; i++) {
         if (strcmp(args[i], "<") == 0) {
-            
+            *rd_in = true;
+            *fd_in = open(args[i + 1], O_RDONLY);
+            args[i] = NULL; //so it doesn't go into the execvp
+            args[i + 1] = NULL;
+        }
+        if (strcmp(args[i], ">") == 0) {
+            *rd_out = true;
+            *fd_out = open(args[i + 1], O_WRONLY | O_TRUNC | O_CREAT, 0600);
+            args[i] = NULL; //same as above
+            args[i + 1] = NULL;
         }
     }
 }
