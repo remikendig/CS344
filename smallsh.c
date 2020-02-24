@@ -13,9 +13,9 @@ int main (int* argc, char** argv) {
     char* token = 0; //for string tokenization
     struct dynarray* processes = dynarray_create(); //dynamic array for child processes
     pid_t spawn_pid = -2;
-    struct sigaction action_sigint = {0}, action_sigstp = {0};
+    struct sigaction action_sigint = {0}, action_sigtstp = {0};
 
-    void catch_SIGSTP(int signo) {
+    void catch_SIGTSTP(int signo) { //trust me, i would love to put this anywhere else, but i need it to access fg_mode flag
         char* msg1 = "Entering foreground-only mode (& is disallowed)\n";
         char* msg2 = "Exiting foreground-only mode (& is re-allowed)\n";
         int msg1_n = 49, msg2_n = 47;
@@ -29,7 +29,13 @@ int main (int* argc, char** argv) {
         }
     }
 
+    action_sigtstp.sa_handler = catch_SIGTSTP;
+    sigfillset(&action_sigtstp.sa_mask);
+    action_sigtstp.sa_flags = SA_RESTART;
+
     memset(line, '\0', COMMAND_MAX_LENGTH);
+
+    sigaction(SIGTSTP, &action_sigtstp, NULL);
 
     while (1) {
         printf(": "); fflush(stdout); //print prompt
