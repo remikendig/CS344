@@ -35,7 +35,7 @@ void smallsh_cd(char* path) {
 
 /*
 *   Function: smallsh_status()
-*   Status: UNTESTED
+*   Status: DONE
 *   Purpose: To print out the exit status of the last foreground
 *            process to run. If no foreground processes have been
 *            run, prints out 0. Also specifies whether the process
