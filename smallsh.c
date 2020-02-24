@@ -1,21 +1,38 @@
-#include "smallsh_builtins.h"
+#include "smallsh_sighand.h" //this header files contains all my includes i need
+#include <signal.h>
 
 #define MAX_ARGS 512
 #define COMMAND_MAX_LENGTH 2048
 
 int main (int* argc, char** argv) {
     int i = 0, fg_status = 0, argn = 0, //i is for loops, fg_status is for the status command, argn is for the number of command line arguments,
-    j = 1, in_fd = -1, out_fd = -1;     // j is for other loops, in_fd is for input redirection file descriptor, out_fd is same but output redirection
+    j = 1, in_fd = -1, out_fd = -1, ch_exit = -5;     // j is for other loops, in_fd is for input redirection file descriptor, out_fd is same but output redirection
     bool if_sig = false, fg_mode = false; //if_sig is for checking whether the last fg process was terminated by signal, fg_mode is for toggling foreground-only mode
     char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
     char** args; //array of arguments, allocated and freed for each loop
     char* token = 0; //for string tokenization
     struct dynarray* processes = dynarray_create(); //dynamic array for child processes
+    pid_t spawn_pid = -2;
+    struct sigaction action_sigint = {0}, action_sigstp = {0};
+
+    void catch_SIGSTP(int signo) {
+        char* msg1 = "Entering foreground-only mode (& is disallowed)\n";
+        char* msg2 = "Exiting foreground-only mode (& is re-allowed)\n";
+        int msg1_n = 49, msg2_n = 47;
+
+        if (fg_mode == false) {
+            write(STDOUT_FILENO, msg1, msg1_n);
+            fg_mode = true;
+        } else {
+            write(STDOUT_FILENO, msg2, msg2_n);
+            fg_mode = false;
+        }
+    }
 
     memset(line, '\0', COMMAND_MAX_LENGTH);
 
     while (1) {
-        printf(":"); fflush(stdout); //print prompt
+        printf(": "); fflush(stdout); //print prompt
 
         fgets(line, COMMAND_MAX_LENGTH, stdin);
 
@@ -68,6 +85,24 @@ int main (int* argc, char** argv) {
                 }
             } else if (strcmp("status", args[0]) == 0) {
                 smallsh_status(fg_status, if_sig);
+            } else {
+                spawn_pid = fork();
+                dynarray_insert(processes, &spawn_pid);
+                if (spawn_pid == -1) {
+                    perror("child process failed\n");
+                    exit(1);
+                } else if (spawn_pid == 0) {
+                    execvp(args[0], args);
+                    exit(0);
+                }
+                waitpid(spawn_pid, &ch_exit, 0);
+                if (WIFEXITED(ch_exit)) {
+                    if_sig = false;
+                    fg_status = WEXITSTATUS(ch_exit);
+                } else {
+                    if_sig = true;
+                    fg_status = WTERMSIG(ch_exit);
+                }
             }
         }
 
