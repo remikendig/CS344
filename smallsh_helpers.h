@@ -5,6 +5,7 @@
 
 #define COMMAND_MAX_LENGTH 2048
 
-void get_and_parse_input(struct dynarray* args, char line[2048]);
+void get_and_parse_input(char*** args, char line[2048], int* argn);
+void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn);
 
 #endif
