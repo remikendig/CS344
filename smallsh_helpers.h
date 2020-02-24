@@ -7,5 +7,6 @@
 
 void get_and_parse_input(char*** args, char line[2048], int* argn);
 void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn, int* fd_in, int* fd_out);
+void expand_pid(char** args, int argn);
 
 #endif

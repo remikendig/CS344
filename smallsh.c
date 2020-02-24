@@ -6,7 +6,7 @@
 
 int main (int* argc, char** argv) {
     int i = 0, fg_status = 0, argn = 0, //i is for loops, fg_status is for the status command, argn is for the number of command line arguments,
-        j = 1, in_fd = -2, out_fd = -2, ch_exit = -5;     // j is for other loops, in_fd is for input redirection file descriptor, out_fd is same but output redirection
+        j = 1, in_fd = -2, out_fd = -2, ch_exit = -5, result = 0;     // j is for other loops, in_fd is for input redirection file descriptor, out_fd is same but output redirection
     bool if_sig = false, fg_mode = false, //if_sig is for checking whether the last fg process was terminated by signal, fg_mode is for toggling foreground-only mode,
          rd_in = false, rd_out = false; //rd_in is checking for input redirection, rd_out is checking for output redirection
     char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
@@ -63,11 +63,25 @@ int main (int* argc, char** argv) {
                     dynarray_insert(processes, &spawn_pid);
                     if (spawn_pid == -1) {
                         perror("child process failed\n");
+                        continue;
                     } else if (spawn_pid == 0) {
-                        check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd);
-                        if ((in_fd == -1) || (out_fd == -1)) {
+                        check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection
+                        if ((in_fd == -1) || (out_fd == -1)) { //check for file open error
                             perror("file open error");
                             exit(1);
+                        }
+                        if (rd_in) {
+                            result = dup2(in_fd, 0);
+                            if (result == -1) {
+                                perror("dup2 error");
+                                exit(1);
+                            }
+                        }
+                        if (rd_out) {
+                            result = dup2(out_fd, 1);
+                            if (result == -1) {
+                                perror("dup2 error");
+                            }
                         }
                         execvp(args[0], args);
                         exit(0);
