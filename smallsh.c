@@ -4,19 +4,18 @@
 #define COMMAND_MAX_LENGTH 2048
 
 int main (int* argc, char** argv) {
-    int i = 0, fg_status = 0, argn = 0, j = 1; //i is for loops, fg_status is for the status command, argn is for the number of command line arguments, j is for other loops
+    int i = 0, fg_status = 0, argn = 0, //i is for loops, fg_status is for the status command, argn is for the number of command line arguments,
+    j = 1, in_fd = -1, out_fd = -1;     // j is for other loops, in_fd is for input redirection file descriptor, out_fd is same but output redirection
     bool if_sig = false, fg_mode = false; //if_sig is for checking whether the last fg process was terminated by signal, fg_mode is for toggling foreground-only mode
     char line[COMMAND_MAX_LENGTH]; //this is how i'll read in lines
-    char** args;
-    char tmp[COMMAND_MAX_LENGTH];
-    char* token = 0;
-    struct dynarray* processes = dynarray_create();
+    char** args; //array of arguments, allocated and freed for each loop
+    char* token = 0; //for string tokenization
+    struct dynarray* processes = dynarray_create(); //dynamic array for child processes
 
     memset(line, '\0', COMMAND_MAX_LENGTH);
 
     while (1) {
-        printf(":");
-        fflush(stdout); //print prompt
+        printf(":"); fflush(stdout); //print prompt
 
         fgets(line, COMMAND_MAX_LENGTH, stdin);
 
@@ -72,14 +71,14 @@ int main (int* argc, char** argv) {
             }
         }
 
-        for (i = 0; i < argn; i++) {
+        for (i = 0; i < argn; i++) { //free dynamically allocated memory
             free(args[i]);
         }
-        free(args); //free dynamically allocated memory
-        argn = 0; //reset number of arguments so Bad Times won't happen (almost let Bad Times happen in one go around of this)
+        free(args);
+        argn = 0; //reset number of arguments
     }
     
-    //dynarray_free(processes);
+    dynarray_free(processes);
 
     return 0;
 }
