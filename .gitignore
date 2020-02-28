@@ -3,9 +3,12 @@ smallsh
 test
 test.c
 *.o
-p3gradingscript
+./p3gradingscript
 smallsh_helpers.c
 smallsh_helpers.h
 mytestresults
 p3gradingscript
 .nfs000000007ed5bbf000000234
+junk
+p3gradingscript
+testresults
