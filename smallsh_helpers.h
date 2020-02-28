@@ -10,5 +10,7 @@ void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn, int* 
 int search_process_array(struct dynarray* processes);
 void expand_pid(char* arg, int argn);
 void bg_process(char** args, int argn);
+void fg_process(char** args, int argn);
+bool check_bg(char** args, int argn, bool fg_mode);
 
 #endif

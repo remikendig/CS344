@@ -137,3 +137,40 @@ void bg_process(char** args, int argn) {
     }
     execvp(args[0], args);
 }
+
+void fg_process(char** args, int argn) {
+    bool rd_in = false, rd_out = false;
+    int in_fd = -2, out_fd = -2, result = -2;
+
+    check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection
+
+    if (rd_in) {
+        result = dup2(in_fd, 0);
+        if (result == -1) {
+            perror("dup2 error");
+            exit(1);
+        }
+    }
+    if (rd_out) {
+        result = dup2(out_fd, 1);
+        if (result == -1) {
+            perror("dup2 error");
+        }
+    }
+    execvp(args[0], args);
+    exit(0);
+}
+
+bool check_bg(char** args, int argn, bool fg_mode) {
+    bool contains_amp = false, bg_true = false;
+
+    if (strcmp(args[argn - 1], "&") == 0) {
+        contains_amp = true;
+    }
+
+    if ((contains_amp == true) & (fg_mode == false)) {
+        bg_true = true;
+    }
+
+    return bg_true;
+}
