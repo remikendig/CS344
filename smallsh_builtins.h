@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/wait.h>
 
 #include "dynarray.h"
 

@@ -50,20 +50,90 @@ void check_file_redirect(bool* rd_in, bool* rd_out, char** args, int argn, int* 
 
     for (i = 0; i < argn - 1; i++) {
         if (strcmp(args[i], "<") == 0) {
-            *rd_in = true;
             *fd_in = open(args[i + 1], O_RDONLY);
+            if (*fd_in == -1) {
+                perror("failed to open file for input\n");
+                exit(1);
+            }
+            *rd_in = true;
             args[i] = NULL; //so it doesn't go into the execvp
             args[i + 1] = NULL;
         }
         if (strcmp(args[i], ">") == 0) {
-            *rd_out = true;
             *fd_out = open(args[i + 1], O_WRONLY | O_TRUNC | O_CREAT, 0600);
+            if (*fd_out == -1) {
+                perror("failed to open file for output\n");
+                exit(1);
+            }
+            *rd_out = true;
             args[i] = NULL; //same as above
             args[i + 1] = NULL;
         }
     }
 }
 
-void expand_pid(char** args, int argn) {
-    
+int search_process_array(struct dynarray* processes) {
+    int i = 0, idx = -1;
+}
+
+void expand_pid(char* arg, int argn) {
+    int i = 0, argl = -1, j = -1; //argl is length of argument, j is secondary position in string
+    char buf1[2048] = {0}, buf2 = {0};
+
+    argl = strlen(arg);
+
+    for (i = 0; i < argl; i++) {
+        if (arg[i] == '$' && (i < (argl - 1)) ) {
+            if (arg[i + 1] == '$') {
+                if ((i + 1) < (argl - 1)) {
+
+                }
+            }
+        }
+    }
+}
+
+void bg_process(char** args, int argn) {
+    bool rd_in = false, rd_out = false;
+    int in_fd = -2, out_fd = -2, result = -2;
+
+    check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd);
+
+    if (rd_in) {
+        result = dup2(in_fd, 0);
+        if (result == -1) {
+            perror("dup2 error");
+            exit(1);
+        }
+    } else {
+        in_fd = open("/dev/null", O_RDONLY);
+        if (in_fd == -1) {
+            perror("failed to open /dev/null\n");
+            exit(1);
+        }
+        result = dup2(in_fd, 0);
+        if (result == -1) {
+            perror("dup2 error");
+            exit(1);
+        }
+    }
+    if (rd_out) {
+        result = dup2(out_fd, 1);
+        if (result == -1) {
+            perror("dup2 error\n");
+            exit(1);
+        }
+    } else {
+        out_fd = open("/dev/null", O_WRONLY);
+        if (out_fd == -1) {
+            perror("failed to open /dev/null\n");
+            exit(1);
+        }
+        result = dup2(out_fd, 1);
+        if (result == -1) {
+            perror("dup2 error\n");
+            exit(1);
+        }
+    }
+    execvp(args[0], args);
 }
