@@ -65,7 +65,6 @@ int main (int* argc, char** argv) {
                     }
                     else if (spawn_pid == 0) {
                         bg_process(args, argn);
-                        exit(0);
                     }
                     waitpid(spawn_pid, &ch_exit, WNOHANG);
                 } else { //fg processes
