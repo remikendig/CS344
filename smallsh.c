@@ -56,7 +56,7 @@ int main (int* argc, char** argv) {
             } else if (strcmp("status", args[0]) == 0) {
                 smallsh_status(fg_status, if_sig);
             } else {
-                if ((strcmp("&", args[argn - 1]) == 0) && (fg_mode == false)) { //for background processes
+                if (check_bg(args, argn, fg_mode)) { //for background processes
                     spawn_pid = fork();
                     dynarray_insert(processes, &spawn_pid);
                     if (spawn_pid == -1) {
@@ -64,9 +64,7 @@ int main (int* argc, char** argv) {
                         continue;
                     }
                     else if (spawn_pid == 0) {
-                        
-                        bg_process();
-                        
+                        bg_process(args, argn);
                         exit(0);
                     }
                     waitpid(spawn_pid, &ch_exit, WNOHANG);
@@ -77,22 +75,7 @@ int main (int* argc, char** argv) {
                         perror("child process failed\n");
                         continue;
                     } else if (spawn_pid == 0) {
-                        check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection
-                        if (rd_in) {
-                            result = dup2(in_fd, 0);
-                            if (result == -1) {
-                                perror("dup2 error");
-                                exit(1);
-                            }
-                        }
-                        if (rd_out) {
-                            result = dup2(out_fd, 1);
-                            if (result == -1) {
-                                perror("dup2 error");
-                            }
-                        }
-                        execvp(args[0], args);
-                        exit(0);
+                        fg_process(args, argn);
                     }
                     waitpid(spawn_pid, &ch_exit, 0);
                     if (WIFEXITED(ch_exit)) {
