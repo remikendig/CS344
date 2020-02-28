@@ -97,6 +97,10 @@ void bg_process(char** args, int argn) {
     bool rd_in = false, rd_out = false;
     int in_fd = -2, out_fd = -2, result = -2;
 
+    args[argn - 1] = NULL; //the ampersand is not an argument so get rid of it
+
+    printf("background pid is %d\n", getpid());
+
     check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection first
 
     if (rd_in) {
@@ -135,6 +139,8 @@ void bg_process(char** args, int argn) {
             exit(1);
         }
     }
+    
+    
     execvp(args[0], args); //execute the command with everything appropriately redirected
     exit(0);
 }
@@ -158,6 +164,7 @@ void fg_process(char** args, int argn) {
             perror("dup2 error");
         }
     }
+
     execvp(args[0], args);
     exit(0);
 }
