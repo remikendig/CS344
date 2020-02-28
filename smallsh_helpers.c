@@ -97,45 +97,46 @@ void bg_process(char** args, int argn) {
     bool rd_in = false, rd_out = false;
     int in_fd = -2, out_fd = -2, result = -2;
 
-    check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd);
+    check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection first
 
     if (rd_in) {
-        result = dup2(in_fd, 0);
+        result = dup2(in_fd, 0); //redirect input from the appropriate file, if necessary
         if (result == -1) {
             perror("dup2 error");
             exit(1);
         }
-    } else {
-        in_fd = open("/dev/null", O_RDONLY);
+    } else { //otherwise redirect from /dev/null
+        in_fd = open("/dev/null", O_RDONLY); //open /dev/null for reading only
         if (in_fd == -1) {
             perror("failed to open /dev/null\n");
             exit(1);
         }
-        result = dup2(in_fd, 0);
+        result = dup2(in_fd, 0); //redirect
         if (result == -1) {
             perror("dup2 error");
             exit(1);
         }
     }
     if (rd_out) {
-        result = dup2(out_fd, 1);
+        result = dup2(out_fd, 1); //redirect output to appropriate file, if necessary
         if (result == -1) {
             perror("dup2 error\n");
             exit(1);
         }
-    } else {
-        out_fd = open("/dev/null", O_WRONLY);
+    } else { //otherwise redirect to /dev/null 
+        out_fd = open("/dev/null", O_WRONLY); //open /dev/null for writing only
         if (out_fd == -1) {
             perror("failed to open /dev/null\n");
             exit(1);
         }
-        result = dup2(out_fd, 1);
+        result = dup2(out_fd, 1); //redirect
         if (result == -1) {
             perror("dup2 error\n");
             exit(1);
         }
     }
-    execvp(args[0], args);
+    execvp(args[0], args); //execute the command with everything appropriately redirected
+    exit(0);
 }
 
 void fg_process(char** args, int argn) {
@@ -144,14 +145,14 @@ void fg_process(char** args, int argn) {
 
     check_file_redirect(&rd_in, &rd_out, args, argn, &in_fd, &out_fd); //check for file redirection
 
-    if (rd_in) {
+    if (rd_in) { //redirect from input file if necessary
         result = dup2(in_fd, 0);
         if (result == -1) {
             perror("dup2 error");
             exit(1);
         }
     }
-    if (rd_out) {
+    if (rd_out) { //redirect to output file if necessary
         result = dup2(out_fd, 1);
         if (result == -1) {
             perror("dup2 error");
@@ -162,15 +163,16 @@ void fg_process(char** args, int argn) {
 }
 
 bool check_bg(char** args, int argn, bool fg_mode) {
-    bool contains_amp = false, bg_true = false;
+    bool contains_amp = false;
 
-    if (strcmp(args[argn - 1], "&") == 0) {
+    if (strcmp(args[argn - 1], "&") == 0) { //check if last argument is ampersand
         contains_amp = true;
     }
 
-    if ((contains_amp == true) & (fg_mode == false)) {
-        bg_true = true;
+    if ((contains_amp == true) & (fg_mode == false)) { //it's only a bg process if the last arg is &
+                                                       //and the shell is not in fg only mode
+        return true;
     }
 
-    return bg_true;
+    return false;
 }
